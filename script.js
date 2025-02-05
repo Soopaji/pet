@@ -1,74 +1,55 @@
-// Create pet event listener
-document.getElementById('create-pet-button').addEventListener('click', function() {
-    const petName = document.getElementById('pet-name').value;
-    const petType = document.getElementById('pet-type').value;
-    const petImage = document.getElementById('pet-image').value;
+let pet = null;
+const API_KEY = "AIzaSyCWjlAAysIa65rncjBnn_J0UQL8qGMDACM"; // Replace with your actual API key
 
-    if (!petName || !petType || !petImage) {
-        alert("Please fill in all fields to create your pet.");
+function createPet() {
+    const name = document.getElementById("pet-name").value;
+    const type = document.getElementById("pet-type").value;
+    pet = { name, type, happiness: 100 };
+
+    document.getElementById("pet-info").innerText = `${name} the ${type} has been created!`;
+}
+
+async function generateAIResponse(prompt) {
+    if (!pet) {
+        return "Please create a pet first!";
+    }
+
+    const animalIntro = pet.type === "cat" ? "Meow, " : pet.type === "dog" ? "Woof! " : pet.type === "parrot" ? "Squawk! " : "";
+    const fullPrompt = `You are a ${pet.type} named ${pet.name}. Respond like a ${pet.type} would. Message: ${prompt}`;
+
+    try {
+        const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + API_KEY, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: fullPrompt }] }] })
+        });
+
+        const data = await response.json();
+        return animalIntro + (data.candidates?.[0]?.content?.parts?.[0]?.text || "...");
+    } catch (error) {
+        console.error("Error fetching AI response:", error);
+        return "Your pet stays silent.";
+    }
+}
+
+async function sendMessage(action = null) {
+    const userInput = action || document.getElementById("user-input").value;
+    if (!pet) {
+        alert("Please create a pet first!");
         return;
     }
 
-    fetch('/api/create_pet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: petName, type: petType, image_url: petImage })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Hide creation form and show pet display, actions, and chatbox
-        document.getElementById('pet-creation').style.display = 'none';
-        document.getElementById('pet-display').style.display = 'block';
-        document.getElementById('pet-actions').style.display = 'block';
-        document.getElementById('chatbox').style.display = 'block';
-        document.getElementById('pet-title').textContent = `${petName} the ${petType}`;
-        document.getElementById('pet-image-display').src = data.image_url;
-        document.getElementById('response-message').textContent = data.message;
-    })
-    .catch(error => console.error('Error:', error));
-});
+    let petResponse;
+    if (userInput.toLowerCase() === "feed") {
+        pet.happiness += 10;
+        petResponse = `${pet.name} happily eats! 🍖`;
+    } else if (userInput.toLowerCase() === "play") {
+        pet.happiness += 5;
+        petResponse = `${pet.name} enjoys playing! 🐾`;
+    } else {
+        petResponse = await generateAIResponse(userInput);
+    }
 
-// Action buttons (Feed, Play, Check Mood)
-const actionButtons = document.querySelectorAll('.action-button');
-actionButtons.forEach(button => {
-    button.addEventListener('click', function() {
-        const command = this.getAttribute('data-command');
-        fetch('/api/action', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ command: command })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('response-message').textContent = data.response;
-            document.getElementById('pet-happiness').textContent = `Happiness: ${data.happiness}`;
-        })
-        .catch(error => console.error('Error:', error));
-    });
-});
-
-// Chatbox functionality
-document.getElementById('chat-send-button').addEventListener('click', function() {
-    const message = document.getElementById('chat-input').value;
-    if (message.trim() === '') return;
-    // Append user's message to the chat area
-    const chatMessages = document.getElementById('chat-messages');
-    const userMsgElem = document.createElement('p');
-    userMsgElem.textContent = "You: " + message;
-    chatMessages.appendChild(userMsgElem);
-
-    fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        const botMsgElem = document.createElement('p');
-        botMsgElem.textContent = data.response;
-        chatMessages.appendChild(botMsgElem);
-        // Clear the chat input field
-        document.getElementById('chat-input').value = '';
-    })
-    .catch(error => console.error('Error:', error));
-});
+    document.getElementById("chat-output").innerHTML += `<p><b>You:</b> ${userInput}</p>`;
+    document.getElementById("chat-output").innerHTML += `<p><b>${pet.name}:</b> ${petResponse}</p>`;
+}
