@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive Virtual Pet Chat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Create Your Virtual Pet</h1>
+  
+  <!-- Pet Creation Form -->
+  <div id="pet-creation">
+    <input type="text" id="pet-name" placeholder="Enter pet name">
+    <select id="pet-type">
+      <option value="">Select Animal Type</option>
+      <option value="dog">Dog</option>
+      <option value="cat">Cat</option>
+      <option value="bird">Bird</option>
+      <option value="dragon">Dragon</option>
+      <!-- Add more animal types as desired -->
+    </select>
+    <!-- Choose an appearance (example image URLs) -->
+    <select id="pet-image">
+      <option value="">Select Pet Appearance</option>
+      <option value="https://via.placeholder.com/200?text=Dog">Dog Image</option>
+      <option value="https://via.placeholder.com/200?text=Cat">Cat Image</option>
+      <option value="https://via.placeholder.com/200?text=Bird">Bird Image</option>
+      <option value="https://via.placeholder.com/200?text=Dragon">Dragon Image</option>
+    </select>
+    <button id="create-pet-button">Create Pet</button>
+  </div>
+
+  <!-- Pet Display -->
+  <div id="pet-display" style="display:none;">
+    <h2 id="pet-title"></h2>
+    <img id="pet-image-display" src="" alt="Your Virtual Pet">
+  </div>
+
+  <!-- Pet Action Buttons -->
+  <div id="pet-actions" style="display:none;">
+    <button data-command="feed" class="action-button">Feed</button>
+    <button data-command="play" class="action-button">Play</button>
+    <button data-command="check mood" class="action-button">Check Mood</button>
+  </div>
+
+  <!-- Chatbox for Conversing with Your Pet -->
+  <div id="chatbox" style="display:none;">
+    <h3>Chat with your pet</h3>
+    <div id="chat-messages"></div>
+    <input type="text" id="chat-input" placeholder="Type your message here">
+    <button id="chat-send-button">Send</button>
+  </div>
+
+  <!-- General Response Output -->
+  <div id="response-output">
+    <p id="response-message"></p>
+    <p id="pet-happiness"></p>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

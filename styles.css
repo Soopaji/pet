@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+}
+
+#pet-creation, #pet-actions, #chatbox {
+    margin: 20px;
+}
+
+input, select {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#pet-display img {
+    width: 200px;
+    height: 200px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+/* Styling for the chatbox */
+#chatbox {
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-width: 500px;
+    margin: 20px auto;
+    background-color: #fff;
+}
+
+#chat-messages {
+    height: 200px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: left;
+}
